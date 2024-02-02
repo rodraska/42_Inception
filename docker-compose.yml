@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
+      interval: 5s
+      timeout: 30s
+      retries: 10
+      start_period: 5s
+    env_file: /home/rreis-de42/Documents/proto/.env
+    networks:
+      - mynetwork
+  
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    depends_on:
+      - wordpress
+    ports:
+      - "443:443"
+    volumes:
+      - wordpress_data:/var/www/html
+    env_file: /home/rreis-de42/Documents/proto/.env
+    networks:
+      - mynetwork
+    
+  wordpress:
+    container_name: wordpress
+    build: ./requirements/wordpress
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    volumes:
+      - wordpress_data:/var/www/html
+    env_file: /home/rreis-de42/Documents/proto/.env
+    networks:
+      - mynetwork
+
+volumes:
+  mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/rreis-de42/data/mysql
+      o: bind
+  wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/rreis-de42/data/wordpress
+      o: bind
+
+networks:
+  mynetwork:
+    name: mynetwork
+    driver: bridge
