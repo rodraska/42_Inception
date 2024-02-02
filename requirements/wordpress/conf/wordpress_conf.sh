@@ -2,8 +2,7 @@
 
 # Check if WordPress config file exists
 cd /var/www/html
-ls "/var/www/html"
-if [ ! -e "$/var/www/html" ]; then
+if [ ! -e "/var/www/html/wp-config.php" ]; then
 	echo "[Wordpress startup 1] Setting up WordPress"
 	echo "[Wordpress startup 2] Updating WP-CLI tool"
 	wp cli update --yes --allow-root
@@ -12,7 +11,7 @@ if [ ! -e "$/var/www/html" ]; then
 	echo "[Wordpress startup 4] Creating wp-config.php"
 	wp config create --dbname=${MDB_NAME} --path=/var/www/html/ --dbuser=${MDB_USER} --dbpass=${MDB_USER_PASSWORD} --dbhost=${MDB_HOST} --allow-root
 	echo "[Wordpress startup 5] Installing WordPress core"
-	wp core install --url=${DOMAIN_NAME}/wordpress --title=${WP_TITLE} --admin_user=${WP_ADMIN_USER} --admin_password=${WP_ADMIN_PASSWORD} --admin_email=${WP_ADMIN_EMAIL} --allow-root
+	wp core install --url=${DOMAIN_NAME} --title=${WP_TITLE} --admin_user=${WP_ADMIN_USER} --admin_password=${WP_ADMIN_PASSWORD} --admin_email=${WP_ADMIN_EMAIL} --allow-root
 	echo "[Wordpress startup 6] Creating WordPress default user"
 	wp user create ${WP_USER_USER} ${WP_USER_EMAIL} --user_pass=${WP_USER_PASSWORD} --role=author --display_name=${MDB_USER} --porcelain --allow-root
 	echo "[Wordpress startup 7] Installing WordPress theme"
