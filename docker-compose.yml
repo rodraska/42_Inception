@@ -7,15 +7,9 @@ services:
     build: ./requirements/mariadb
     volumes:
       - mariadb_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "--silent"]
-      interval: 5s
-      timeout: 30s
-      retries: 10
-      start_period: 5s
     env_file: /home/rreis-de42/Documents/proto/.env
     networks:
-      - mynetwork
+      - soufixe
   
   nginx:
     container_name: nginx
@@ -28,19 +22,18 @@ services:
       - wordpress_data:/var/www/html
     env_file: /home/rreis-de42/Documents/proto/.env
     networks:
-      - mynetwork
+      - soufixe
     
   wordpress:
     container_name: wordpress
     build: ./requirements/wordpress
     depends_on:
-      mariadb:
-        condition: service_healthy
+      - mariadb
     volumes:
       - wordpress_data:/var/www/html
     env_file: /home/rreis-de42/Documents/proto/.env
     networks:
-      - mynetwork
+      - soufixe
 
 volumes:
   mariadb_data:
@@ -57,6 +50,6 @@ volumes:
       o: bind
 
 networks:
-  mynetwork:
-    name: mynetwork
+  soufixe:
+    name: soufixe
     driver: bridge
