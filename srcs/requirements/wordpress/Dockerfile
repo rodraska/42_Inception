@@ -1,3 +1,7 @@
+# docker-compose down -v --rmi all --remove-orphans
+# docker-compose up --build
+# docker system prune -a --volumes
+
 #base image
 FROM debian:11
 
@@ -23,19 +27,11 @@ RUN mkdir /run/php/ && chmod 755 /run/php/
 
 RUN sed -i 's+listen = /run/php/php7.4-fpm.sock+listen = 9000+g' /etc/php/7.4/fpm/pool.d/www.conf
 
-#custom php-fpm conf
-# COPY ./conf/php-fpm.conf /etc/php/7.4/fpm/php-fpm.conf
 COPY ./conf/wordpress_conf.sh /tmp/wordpress_conf.sh
 RUN chmod +x /tmp/wordpress_conf.sh
 
-#sets working directory for RUN,CMD,ENTRYPOINT, COPY and ADD instructions
-#WORKDIR /var/www/html
-
 #expose port used by php-fpm
 EXPOSE 9000
-
-#start php-fpm
-#CMD ["php-fpm7.4", "-F"]
 
 #wordpress configuration
 ENTRYPOINT ["/tmp/wordpress_conf.sh"]
